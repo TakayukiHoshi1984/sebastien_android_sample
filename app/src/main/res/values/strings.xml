@@ -26,7 +26,7 @@
   -->
 
 <resources>
-    <string name="app_name">対話アプリ</string>
+    <string name="app_name">セバスチャン開発支援 対話アプリ</string>
     <string name="app_info">アプリケーション情報</string>
     <string name="licences">オープンソースライセンス</string>
 </resources>

@@ -37,10 +37,10 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="128dp"
-            android:layout_height="128dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="20dp"
             android:src="@drawable/ic_sebastien" />
 
         <TextView
@@ -58,7 +58,18 @@
             android:layout_gravity="center_horizontal"
             android:text="@string/app_name"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="本アプリは、株式会社アットウェアが開発し公開している”trial_app” (https://github.com/atware/sebastien_android_sample)のソースコードをベースに、株式会社GClueがアプリ化して公開しています。"
+            android:textColor="#8080FF"
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,9 +84,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="株式会社アットウェア"
+            android:text="株式会社GClue"
             android:textColor="@android:color/black"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
