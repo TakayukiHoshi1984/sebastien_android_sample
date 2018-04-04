@@ -25,43 +25,64 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.chat;
+package jp.co.atware.trial_app.fragment;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog.Builder;
+
+import jp.co.atware.trial_app.R;
 
 /**
- * テキストチャット開始ハンドラ
+ * アプリ終了ダイアログ
  */
-public class TextStartHandler extends ChatStartHandler {
-
-    public interface TextChatCallBack {
-        /**
-         * テキストチャット開始時の操作
-         */
-        void onTextStart(String text);
-    }
-
-    private final String text;
-    private final TextChatCallBack callBack;
+public class Exit extends DialogFragment {
 
     /**
-     * コンストラクタ
+     * インスタンスを生成
      *
-     * @param text     送信するテキスト
-     * @param callBack TextChatCallBack
+     * @param title   タイトル
+     * @param message 表示メッセージ
+     * @return Exitインスタンス
      */
-    public TextStartHandler(String text, TextChatCallBack callBack) {
-        super();
-        this.text = text;
-        this.callBack = callBack;
+    public static Exit newInstance(String title, String message) {
+        Exit dialog = new Exit();
+        dialog.title = title;
+        dialog.message = message;
+        return dialog;
+    }
+
+    private String title;
+    private String message;
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        setCancelable(false);
+        Builder builder = new Builder(getActivity());
+        if (title != null) {
+            builder.setTitle(title);
+        }
+        if (message != null) {
+            builder.setMessage(message);
+        }
+        return builder.setNegativeButton(R.string.force_quit, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getActivity().finishAndRemoveTask();
+            }
+        }).create();
     }
 
     @Override
-    public void run() {
-        callBack.onTextStart(text);
-    }
-
-    @Override
-    public ChatMode getMode() {
-        return ChatMode.TEXT;
+    public void onDestroy() {
+        super.onDestroy();
+        title = null;
+        message = null;
     }
 
 }

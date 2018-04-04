@@ -25,64 +25,60 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.fragment;
-
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
-import android.os.Process;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog.Builder;
+package jp.co.atware.trial_app.metadata;
 
 /**
- * 強制終了ダイアログ
+ * エージェント切替情報
  */
-public class KillProcessDialog extends DialogFragment {
+public class SwitchAgent {
 
     /**
-     * インスタンスを生成
-     *
-     * @param title   タイトル
-     * @param message 表示メッセージ
-     * @return KillProcessDialogインスタンス
+     * エージェント区分
      */
-    public static KillProcessDialog newInstance(String title, String message) {
-        KillProcessDialog dialog = new KillProcessDialog();
-        dialog.title = title;
-        dialog.message = message;
-        return dialog;
-    }
+    public enum AgentType {
+        MAIN, EXPERT;
 
-    private String title;
-    private String message;
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        setCancelable(false);
-        Builder builder = new Builder(getActivity());
-        if (title != null) {
-            builder.setTitle(title);
-        }
-        if (message != null) {
-            builder.setMessage(message);
-        }
-        return builder.setNegativeButton("アプリ終了", new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Process.killProcess(Process.myPid());
+        public static AgentType of(String s) {
+            if (s != null) {
+                return s.equals("1") ? MAIN : EXPERT;
             }
-        }).create();
+            return null;
+        }
+    }
+
+    public String agentId;
+    public AgentType agentType;
+    public boolean afterUtt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SwitchAgent that = (SwitchAgent) o;
+
+        if (afterUtt != that.afterUtt) return false;
+        if (agentId != null ? !agentId.equals(that.agentId) : that.agentId != null)
+            return false;
+        return agentType == that.agentType;
+
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        title = null;
-        message = null;
+    public int hashCode() {
+        int result = agentId != null ? agentId.hashCode() : 0;
+        result = 31 * result + (agentType != null ? agentType.hashCode() : 0);
+        result = 31 * result + (afterUtt ? 1 : 0);
+        return result;
     }
 
+    @Override
+    public String toString() {
+        return "SwitchAgent{" +
+                "agentId='" + agentId + '\'' +
+                ", agentType=" + agentType +
+                ", afterUtt=" + afterUtt +
+                '}';
+    }
 
 }

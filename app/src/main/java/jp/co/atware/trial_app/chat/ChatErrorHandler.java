@@ -27,46 +27,51 @@
 
 package jp.co.atware.trial_app.chat;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.nttdocomo.flow.ErrorEventHandler;
+
+import jp.co.atware.trial_app.R;
+import jp.co.atware.trial_app.chat.ChatController.ChatMode;
+import jp.co.atware.trial_app.chat.ChatController.ChatStatus;
+import jp.co.atware.trial_app.fragment.Alert;
+import jp.co.atware.trial_app.fragment.UpdateAccessToken;
 
 /**
- * デバイス情報
+ * 対話エラー時の処理
  */
-public class DeviceInfo {
+class ChatErrorHandler extends ErrorEventHandler {
 
-    public static final String KEY = "deviceInfo";
+    private static final int TOKEN_EXPIRED = 40102;
+
+    private final ChatMode mode;
 
     /**
-     * 合成音声再生フラグ
+     * コンストラクタ
+     *
+     * @param mode 対話モード
      */
-    public enum PlayTTS {
-        ON, OFF;
+    ChatErrorHandler(ChatMode mode) {
+        this.mode = mode;
+    }
 
-        @JsonValue
-        public String toValue() {
-            return name().toLowerCase();
+    @Override
+    public void run(int errCode, String message) {
+        ChatController chat = ChatController.getInstance();
+        // 音声対話中に接続エラーが発生した場合は自動接続を行う
+        if (mode == ChatMode.VOICE && errCode != TOKEN_EXPIRED && chat.setAutoStart()) {
+            return;
         }
-
-        public static PlayTTS fromValue(String value) {
-            for (PlayTTS playTTS : values()) {
-                if (playTTS.toValue().equals(value)) {
-                    return playTTS;
-                }
-            }
-            throw new IllegalArgumentException("playTTS:" + value + " is invalid.");
+        chat.setStatus(ChatStatus.STOP);
+        chat.setSubtitle(R.string.stop);
+        if (mode == ChatMode.VOICE) {
+            chat.stopVoice();
+        } else {
+            chat.stopText();
+        }
+        if (errCode == TOKEN_EXPIRED) {
+            chat.show(new UpdateAccessToken());
+        } else {
+            chat.show(Alert.newInstance(ChatApplication.getInstance().getApplicationContext()
+                    .getString(R.string.failed), message));
         }
     }
-
-    public String deviceName;
-    public PlayTTS playTTS;
-
-    public DeviceInfo() {
-
-    }
-
-    public DeviceInfo(String deviceName, PlayTTS playTTS) {
-        this.deviceName = deviceName;
-        this.playTTS = playTTS;
-    }
-
 }

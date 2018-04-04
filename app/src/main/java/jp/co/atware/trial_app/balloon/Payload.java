@@ -25,50 +25,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.chat;
+package jp.co.atware.trial_app.balloon;
 
-import android.support.annotation.LayoutRes;
-
-import jp.co.atware.trial_app.R;
+import java.util.List;
 
 /**
- * 発話情報
+ * 吹き出し表示情報
  */
-public class Chat {
+public class Payload {
 
-    /**
-     * 発話者
-     */
-    public enum Person {
-        USER(R.layout.user_chat),
-        NLU(R.layout.nlu_chat);
-
-        public final int layout;
-
-        Person(@LayoutRes int layout) {
-            this.layout = layout;
-        }
-    }
-
-    /**
-     * エージェント区分
-     */
-    public enum Agent {
-        PERSONAL, EXPERT;
-    }
-
-    public Person person;
+    public String title;
+    public String url;
     public String text;
-    public Agent switchAgent;
-    public String replyMessage;
+    public List<BalloonButton> buttons;
 
-    public Chat(Person person) {
-        this.person = person;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Payload payload = (Payload) o;
+
+        if (title != null ? !title.equals(payload.title) : payload.title != null) return false;
+        if (url != null ? !url.equals(payload.url) : payload.url != null) return false;
+        if (text != null ? !text.equals(payload.text) : payload.text != null) return false;
+        return buttons != null ? buttons.equals(payload.buttons) : payload.buttons == null;
+
     }
 
-    public Chat(Person person, String text) {
-        this(person);
-        this.text = text;
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        result = 31 * result + (buttons != null ? buttons.hashCode() : 0);
+        return result;
     }
 
+    @Override
+    public String toString() {
+        return "Payload{" +
+                "title='" + title + '\'' +
+                ", url='" + url + '\'' +
+                ", text='" + text + '\'' +
+                ", buttons=" + buttons +
+                '}';
+    }
 }

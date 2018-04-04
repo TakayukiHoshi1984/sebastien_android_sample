@@ -25,55 +25,57 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.fragment;
+package jp.co.atware.trial_app.metadata;
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog.Builder;
-
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * シンプルな警告ダイアログ
+ * デバイス情報
  */
-public class SimpleAlertDialog extends DialogFragment {
+public class DeviceInfo {
 
-    private String title;
-    private String message;
+    public static final String KEY = "deviceInfo";
 
     /**
-     * インスタンスを生成
-     *
-     * @param title   タイトル
-     * @param message 表示メッセージ
-     * @return SimpleAlertDialogインスタンス
+     * 合成音声再生フラグ
      */
-    public static SimpleAlertDialog newInstance(String title, String message) {
-        SimpleAlertDialog dialog = new SimpleAlertDialog();
-        dialog.title = title;
-        dialog.message = message;
-        return dialog;
+    public enum PlayTTS {
+        ON, OFF;
+
+        @JsonValue
+        public String toValue() {
+            return name().toLowerCase();
+        }
+
+        public static PlayTTS fromValue(String value) {
+            for (PlayTTS playTTS : values()) {
+                if (playTTS.toValue().equals(value)) {
+                    return playTTS;
+                }
+            }
+            throw new IllegalArgumentException("playTTS:" + value + " is invalid.");
+        }
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Builder builder = new Builder(getActivity());
-        if (title != null) {
-            builder.setTitle(title);
-        }
-        if (message != null) {
-            builder.setMessage(message);
-        }
-        return builder.setNegativeButton("閉じる", null).create();
+    public String deviceName;
+    public PlayTTS playTTS;
+
+    /**
+     * デフォルトコンストラクタ
+     */
+    public DeviceInfo() {
+
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        title = null;
-        message = null;
+    /**
+     * フルコンストラクタ
+     *
+     * @param deviceName デバイス名
+     * @param playTTS    合成音声再生フラグ
+     */
+    public DeviceInfo(String deviceName, PlayTTS playTTS) {
+        this.deviceName = deviceName;
+        this.playTTS = playTTS;
     }
 
 }

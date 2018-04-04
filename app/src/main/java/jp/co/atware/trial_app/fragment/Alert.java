@@ -25,39 +25,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.chat;
+package jp.co.atware.trial_app.fragment;
+
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog.Builder;
+import jp.co.atware.trial_app.R;
+
 
 /**
- * 音声対話開始ハンドラ
+ * 警告ダイアログ
  */
-public class VoiceStartHandler extends ChatStartHandler {
+public class Alert extends DialogFragment {
 
-    public interface VoiceChatCallBack {
-        /**
-         * 音声対話開始時の操作
-         */
-        void onVoiceStart();
-    }
-
-    private final VoiceChatCallBack callBack;
+    private String title;
+    private String message;
 
     /**
-     * コンストラクタ
+     * インスタンスを生成
      *
-     * @param callBack VoiceChatCallBack
+     * @param title   タイトル
+     * @param message 表示メッセージ
+     * @return Alertインスタンス
      */
-    public VoiceStartHandler(VoiceChatCallBack callBack) {
-        super();
-        this.callBack = callBack;
+    public static Alert newInstance(String title, String message) {
+        Alert dialog = new Alert();
+        dialog.title = title;
+        dialog.message = message;
+        return dialog;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Builder builder = new Builder(getActivity());
+        if (title != null) {
+            builder.setTitle(title);
+        }
+        if (message != null) {
+            builder.setMessage(message);
+        }
+        return builder.setNegativeButton(R.string.close, null).create();
     }
 
     @Override
-    public void run() {
-        callBack.onVoiceStart();
+    public void onDestroy() {
+        super.onDestroy();
+        title = null;
+        message = null;
     }
 
-    @Override
-    public ChatMode getMode() {
-        return ChatMode.VOICE;
-    }
 }

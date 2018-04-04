@@ -38,9 +38,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import jp.co.atware.trial_app.R;
+import jp.co.atware.trial_app.chat.ChatApplication;
 import jp.co.atware.trial_app.util.Config;
 import jp.co.atware.trial_app.util.Config.Keys;
 
@@ -48,14 +48,14 @@ import jp.co.atware.trial_app.util.Config.Keys;
 /**
  * 接続設定ダイアログ
  */
-public class ConfigDialog extends DialogFragment {
+public class EditConfig extends DialogFragment {
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final Config config = Config.getInstance(getActivity());
-        View configView = getActivity().getLayoutInflater().inflate(R.layout.config, null);
+        final Config config = Config.getInstance();
+        View configView = getActivity().getLayoutInflater().inflate(R.layout.edit_config, null);
         // SSLを使用
         final CheckBox ssl = (CheckBox) configView.findViewById(R.id.ssl);
         ssl.setChecked(config.isSSL());
@@ -73,7 +73,7 @@ public class ConfigDialog extends DialogFragment {
         path.setText(config.getPath());
 
         final AlertDialog configDialog = new Builder(getActivity()).setView(configView)
-                .setPositiveButton("変更", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         boolean sslChanged = config.setSSL(ssl.isChecked());
@@ -82,12 +82,14 @@ public class ConfigDialog extends DialogFragment {
                         boolean portChanged = config.setPort(port.getText().toString());
                         boolean pathChanged = config.setPath(path.getText().toString());
                         if (sslChanged || ocspChanged || hostChanged || portChanged || pathChanged) {
-                            Toast.makeText(getActivity(), "変更内容は再起動時に反映されます", Toast.LENGTH_SHORT).show();
+                            ChatApplication app = ChatApplication.getInstance();
+                            app.onPause();
+                            app.setConnection(config.getAccessToken());
                         }
                     }
                 })
-                .setNeutralButton("初期値に戻す", null)
-                .setNegativeButton("キャンセル", null).create();
+                .setNeutralButton(R.string.revert, null)
+                .setNegativeButton(R.string.cancel, null).create();
         // 初期値に戻すボタンクリック時の動作
         configDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override

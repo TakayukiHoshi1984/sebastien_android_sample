@@ -25,40 +25,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package jp.co.atware.trial_app.fragment;
+package jp.co.atware.trial_app.metadata;
 
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog.Builder;
-import android.webkit.CookieManager;
-
-import jp.co.atware.trial_app.util.Config;
-
+import java.util.Map;
 
 /**
- * 認証初期化ダイアログ
+ * サーバ返信情報
  */
-public class InitAuthDialog extends DialogFragment {
+public class Postback {
 
-    @NonNull
+    public String payload;
+    public Map clientData;
+
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new Builder(getActivity()).setTitle("初期化してよろしいですか")
-                .setMessage("再起動時に認証が必要となります")
-                .setPositiveButton("初期化する", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        CookieManager cm = CookieManager.getInstance();
-                        cm.removeAllCookies(null);
-                        cm.flush();
-                        Config.getInstance(getActivity()).removeAccessToken();
-                    }
-                })
-                .setNegativeButton("キャンセル", null).create();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Postback postback = (Postback) o;
+
+        if (payload != null ? !payload.equals(postback.payload) : postback.payload != null)
+            return false;
+        return clientData != null ? clientData.equals(postback.clientData) : postback.clientData == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = payload != null ? payload.hashCode() : 0;
+        result = 31 * result + (clientData != null ? clientData.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Postback{" +
+                "payload='" + payload + '\'' +
+                ", clientData=" + clientData +
+                '}';
     }
 
 }
